@@ -1,14 +1,12 @@
 const express = require('express');
+const connection = require("./config/db");
+const userRouter = require('./router/user');
+const ordersRouter = require('./router/orders');
+const productRouter = require('./router/product');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
-const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
-    host : "localhost",
-    user : "root",
-    password : "root",
-    database : "orderDB"
-});
 
 connection.connect((err) => {
     if(err){
@@ -46,81 +44,11 @@ app.get('/', (req, res) => {
         });
 });
 
-// app.get('/:id', (req, res) => {
-//     connection.query(`${queryAll} WHERE user.id = ${req.params.id}`, (err, data) => {
-//         if(err){
-//             console.log(err);
-//         } else{
-//             res.json(data);
-//         }
-//     })
-// });
-
-
 //USER
-app.get('/user', (req, res) => {
-    connection.query(`SELECT * FROM user`, 
-        (err, data) => {
-            if(err){
-                console.log(err);
-            } else{
-                res.json(data);
-            }
-        });
-});
-
-app.get('/user/:id', (req, res) => {
-    connection.query(`SELECT * FROM user WHERE id = ${req.params.id}`, (err, data) => {
-        if(err){
-            console.log(err);
-        } else{
-            res.json(data);
-        }
-    })
-});
-
+app.use('/user', userRouter);
 
 //PRODUCT
-app.get('/product', (req, res) => {
-    connection.query(`SELECT * FROM product`, 
-        (err, data) => {
-            if(err){
-                console.log(err);
-            } else{
-                res.json(data);
-            }
-        });
-});
-
-app.get('/product/:id', (req, res) => {
-    connection.query(`SELECT * FROM product WHERE id = ${req.params.id}`, (err, data) => {
-        if(err){
-            console.log(err);
-        } else{
-            res.json(data);
-        }
-    })
-});
-
+app.use('/product', productRouter);
 
 //ORDERS
-app.get('/orders', (req, res) => {
-    connection.query(`SELECT * FROM orders`, 
-        (err, data) => {
-            if(err){
-                console.log(err);
-            } else{
-                res.json(data);
-            }
-        });
-});
-
-app.get('/orders/:id', (req, res) => {
-    connection.query(`SELECT * FROM orders WHERE id = ${req.params.id}`, (err, data) => {
-        if(err){
-            console.log(err);
-        } else{
-            res.json(data);
-        }
-    })
-});
+app.use('/orders', ordersRouter);
